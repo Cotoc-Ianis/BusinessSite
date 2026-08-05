@@ -35,6 +35,50 @@ body {
   max-width: 100%;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+section {
+  position: relative;
+}
+
+section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(201, 149, 98, 0.04), transparent 30%, transparent 70%, rgba(32, 79, 73, 0.04));
+  opacity: 0.45;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -55,7 +99,7 @@ button {
 }
 
 .section {
-  padding: 72px 0;
+  padding: 64px 0;
 }
 
 .site-header {
@@ -65,6 +109,7 @@ button {
   background: rgba(16, 54, 47, 0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  animation: fadeUp 0.6s ease both;
 }
 
 .nav-wrap {
@@ -156,14 +201,15 @@ button {
 }
 
 .hero {
-  padding: 58px 0 24px;
+  padding: 44px 0 30px;
+  animation: fadeUp 0.8s ease both;
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1.08fr 0.92fr;
+  grid-template-columns: 1fr;
   align-items: center;
-  gap: 34px;
+  gap: 24px;
 }
 
 .eyebrow,
@@ -180,25 +226,27 @@ button {
 .page-hero h1,
 .split-layout h2,
 .section-heading h2 {
-  font-size: clamp(2.6rem, 6vw, 4.4rem);
-  line-height: 1.08;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  line-height: 1.02;
   letter-spacing: -0.06em;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   color: var(--navy);
 }
 
 .lead {
   margin: 0;
-  max-width: 580px;
+  max-width: 700px;
   color: var(--muted);
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  animation: fadeUp 0.9s ease 0.1s both;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 18px;
+  animation: fadeUp 1s ease 0.2s both;
 }
 
 .btn {
@@ -215,7 +263,8 @@ button {
 }
 
 .btn:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 24px rgba(16, 44, 66, 0.12);
 }
 
 .btn-primary {
@@ -239,9 +288,10 @@ button {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 18px 24px;
-  margin: 28px 0 0;
+  gap: 16px 22px;
+  margin: 24px 0 0;
   padding: 0;
+  animation: fadeUp 1.05s ease 0.25s both;
 }
 
 .hero-metrics li {
@@ -426,7 +476,7 @@ button {
 .split-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 32px;
   align-items: center;
 }
 
@@ -443,7 +493,7 @@ button {
 }
 
 .section-heading {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .center {
@@ -455,7 +505,7 @@ button {
 .packages-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .packages-section {
@@ -468,9 +518,24 @@ button {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 20px 18px;
+  padding: 18px 16px;
   box-shadow: 0 8px 20px rgba(16, 44, 66, 0.03);
   clip-path: polygon(0 0, 100% 0, 100% 92%, 96% 100%, 0 100%);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.info-card:hover,
+.template-card:hover,
+.package-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(16, 44, 66, 0.08);
+  border-color: rgba(36, 151, 168, 0.24);
+}
+
+.info-card,
+.template-card,
+.package-card {
+  animation: fadeUp 0.7s ease both;
 }
 
 .card-step {
@@ -507,6 +572,18 @@ button {
 
 .template-card {
   background: linear-gradient(180deg, #fcf9f4 0%, #f4ece2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.template-card::after {
+  content: "";
+  position: absolute;
+  inset: auto -20px -20px auto;
+  width: 90px;
+  height: 90px;
+  background: radial-gradient(circle, rgba(201, 149, 98, 0.2), transparent 70%);
+  pointer-events: none;
 }
 
 .template-card.featured {
@@ -631,6 +708,19 @@ button {
   box-shadow: var(--shadow);
   color: rgba(255, 255, 255, 0.96);
   clip-path: polygon(0 0, 100% 0, 100% 92%, 95% 100%, 0 100%);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.8s ease 0.15s both;
+}
+
+.quote-box::before {
+  content: "";
+  position: absolute;
+  inset: -20px auto auto -20px;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(201, 149, 98, 0.25), transparent 70%);
+  pointer-events: none;
 }
 
 .quote-box p {
@@ -722,12 +812,27 @@ button {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(16, 44, 66, 0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.portfolio-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(16, 44, 66, 0.08);
+}
+
+.portfolio-card {
+  animation: fadeUp 0.75s ease both;
 }
 
 .portfolio-thumb {
   height: 210px;
   background-size: cover;
   background-position: center;
+  transition: transform 0.35s ease;
+}
+
+.portfolio-card:hover .portfolio-thumb {
+  transform: scale(1.03);
 }
 
 .thumb-one { background: linear-gradient(135deg, rgba(16, 44, 66, 0.5), rgba(36, 151, 168, 0.7)), url("https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80"); }
@@ -810,7 +915,7 @@ button {
 
 @media (max-width: 640px) {
   .section {
-    padding: 72px 0;
+    padding: 56px 0;
   }
 
   .process-grid,
@@ -838,7 +943,7 @@ button {
 
   .package-card {
     min-height: 0;
-    padding: 38px 18px 20px;
+    padding: 30px 16px 18px;
   }
 
   .preferred-tag {
@@ -926,7 +1031,14 @@ button {
   }
 
   .hero {
-    padding-top: 44px;
+    padding-top: 30px;
+  }
+
+  .info-card,
+  .template-card,
+  .package-card,
+  .portfolio-card {
+    transition: none;
   }
 
   .hero-copy h1,
@@ -939,7 +1051,7 @@ button {
   .hero-actions {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 10px;
   }
 
   .btn {
@@ -948,7 +1060,7 @@ button {
   }
 
   .hero-metrics {
-    gap: 12px 18px;
+    gap: 10px 16px;
     justify-content: space-between;
   }
 
