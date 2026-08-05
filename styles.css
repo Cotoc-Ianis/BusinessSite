@@ -94,12 +94,12 @@ button {
 }
 
 .container {
-  width: min(1120px, calc(100% - 32px));
+  width: min(1240px, calc(100% - 28px));
   margin: 0 auto;
 }
 
 .section {
-  padding: 64px 0;
+  padding: 60px 0;
 }
 
 .site-header {
@@ -117,7 +117,7 @@ button {
   align-items: center;
   justify-content: space-between;
   min-height: 68px;
-  gap: 16px;
+  gap: 14px;
 }
 
 .logo {
