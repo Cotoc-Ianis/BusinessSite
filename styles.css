@@ -763,13 +763,22 @@ button {
 
 @media (max-width: 920px) {
   .hero-grid,
-  .split-layout,
-  .process-grid,
+  .split-layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .process-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .template-grid,
-  .packages-grid,
   .portfolio-grid,
   .footer-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
+  }
+
+  .packages-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .hero-grid {
@@ -783,16 +792,31 @@ button {
   .hero-visual {
     order: 2;
   }
+}
 
-  .process-grid,
-  .packages-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 640px) {
+  .section {
+    padding: 72px 0;
   }
 
+  .process-grid,
+  .packages-grid,
   .template-grid,
-  .portfolio-grid,
-  .footer-grid {
+  .portfolio-grid {
     grid-template-columns: 1fr;
+  }
+
+  .package-card {
+    min-height: 0;
+    padding-top: 42px;
+  }
+
+  .preferred-tag {
+    top: 12px;
+  }
+
+  .quote-box {
+    padding: 36px 24px;
   }
 }
 
@@ -855,9 +879,5 @@ button {
 
   .content-area {
     padding-top: 22px;
-  }
-
-  .quote-box {
-    padding: 36px 24px;
   }
 }
