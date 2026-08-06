@@ -34,6 +34,7 @@
           <a href="index.html">Home</a>
           <a href="index.html#about">About</a>
           <a href="index.html#packages">Packages</a>
+          <a href="templates/index.html">Templates</a>
           <a href="customer-sites.html" class="active-page">Client work</a>
           <a href="index.html#contact">Contact</a>
         </nav>
@@ -48,67 +49,65 @@
         </div>
       </section>
 
+      <section class="section client-manager-section">
+        <div class="container">
+          <div class="client-manager-card">
+            <div class="client-manager-header">
+              <p class="section-tag">Add a client</p>
+              <h2>Create a new company entry</h2>
+              <p>Use the form below to add another business to your client work showcase.</p>
+            </div>
+
+            <form id="client-work-form" class="client-work-form">
+              <div class="form-grid">
+                <label>
+                  Company name
+                  <input name="name" type="text" required placeholder="Example: Bright Lane Studios" />
+                </label>
+
+                <label>
+                  Industry
+                  <input name="industry" type="text" placeholder="Example: Retail" />
+                </label>
+
+                <label>
+                  Website URL
+                  <input name="websiteUrl" type="url" placeholder="https://example.com" />
+                </label>
+
+                <label>
+                  Logo URL
+                  <input name="logo" type="url" placeholder="https://example.com/logo.png" />
+                </label>
+
+                <label>
+                  Logo alt text
+                  <input name="logoAlt" type="text" placeholder="Bright Lane Studios logo" />
+                </label>
+
+                <label>
+                  Hero image URL
+                  <input name="heroImage" type="url" placeholder="https://example.com/hero.jpg" />
+                </label>
+
+                <label class="full-width">
+                  Short description
+                  <textarea name="description" placeholder="Describe the website and result"></textarea>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button class="btn btn-primary" type="submit">Add company</button>
+                <button class="btn btn-ghost" id="reset-client-form" type="button">Clear</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
       <section class="section portfolio-section">
-        <div class="container portfolio-grid">
-          <article class="portfolio-card">
-            <div class="portfolio-thumb thumb-one"></div>
-            <div class="portfolio-copy">
-              <span class="client-type">Consulting</span>
-              <h2>Northline Advisory</h2>
-              <p>Strategy-first website redesign focused on credibility and conversion.</p>
-              <a href="https://example.com" target="_blank" rel="noreferrer">Visit website</a>
-            </div>
-          </article>
-
-          <article class="portfolio-card">
-            <div class="portfolio-thumb thumb-two"></div>
-            <div class="portfolio-copy">
-              <span class="client-type">Healthcare</span>
-              <h2>Bright Harbor Clinic</h2>
-              <p>Patient-centered design with clearer service updates and appointment flow.</p>
-              <a href="https://example.com" target="_blank" rel="noreferrer">Visit website</a>
-            </div>
-          </article>
-
-          <article class="portfolio-card">
-            <div class="portfolio-thumb thumb-three"></div>
-            <div class="portfolio-copy">
-              <span class="client-type">Property</span>
-              <h2>Harbor & Co Realty</h2>
-              <p>Modern real estate web presence designed for higher lead quality and trust.</p>
-              <a href="https://example.com" target="_blank" rel="noreferrer">Visit website</a>
-            </div>
-          </article>
-
-          <article class="portfolio-card">
-            <div class="portfolio-thumb thumb-four"></div>
-            <div class="portfolio-copy">
-              <span class="client-type">Hospitality</span>
-              <h2>Summit House</h2>
-              <p>Visual brand refresh and content architecture for a boutique hospitality group.</p>
-              <a href="https://example.com" target="_blank" rel="noreferrer">Visit website</a>
-            </div>
-          </article>
-
-          <article class="portfolio-card">
-            <div class="portfolio-thumb thumb-five"></div>
-            <div class="portfolio-copy">
-              <span class="client-type">Legal</span>
-              <h2>Maple & Rowan</h2>
-              <p>Professional presentation with stronger trust signals and clearer messaging.</p>
-              <a href="https://example.com" target="_blank" rel="noreferrer">Visit website</a>
-            </div>
-          </article>
-
-          <article class="portfolio-card">
-            <div class="portfolio-thumb thumb-six"></div>
-            <div class="portfolio-copy">
-              <span class="client-type">Technology</span>
-              <h2>Signal Point</h2>
-              <p>Conversion-focused SaaS-style site aimed at decision-makers and product buyers.</p>
-              <a href="https://example.com" target="_blank" rel="noreferrer">Visit website</a>
-            </div>
-          </article>
+        <div class="container">
+          <div id="portfolio-grid" class="portfolio-grid" aria-live="polite"></div>
         </div>
       </section>
     </main>
@@ -148,6 +147,110 @@
       </div>
     </footer>
 
+    <script src="client-work-data.js"></script>
     <script src="script.js"></script>
+    <script>
+      const portfolioGrid = document.getElementById('portfolio-grid');
+      const clientWorkForm = document.getElementById('client-work-form');
+      const resetFormButton = document.getElementById('reset-client-form');
+      const storageKey = 'webforge-client-work-items';
+      const fallbackHeroImage = 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=900&q=80';
+      const fallbackLogoImage = 'https://placehold.co/220x90/10362f/ffffff?text=Company';
+
+      const saveItems = () => {
+        if (window.localStorage) {
+          window.localStorage.setItem(storageKey, JSON.stringify(window.clientWorkItems));
+        }
+      };
+
+      const renderPortfolioGrid = () => {
+        if (!portfolioGrid) {
+          return;
+        }
+
+        portfolioGrid.innerHTML = (window.clientWorkItems || [])
+          .map((item) => {
+            const heroImage = item.heroImage || fallbackHeroImage;
+            const logoImage = item.logo || fallbackLogoImage;
+            const logoAlt = item.logoAlt || `${item.name || 'Company'} logo`;
+            const websiteUrl = item.websiteUrl || '';
+            const description = item.description || 'A new client entry is ready for more detail.';
+
+            return `
+              <article class="portfolio-card">
+                <div class="portfolio-thumb" style="background-image: linear-gradient(135deg, rgba(16, 44, 66, 0.46), rgba(36, 151, 168, 0.65)), url('${heroImage}')"></div>
+                <div class="portfolio-copy">
+                  <div class="client-logo-wrap">
+                    <img class="client-logo" src="${logoImage}" alt="${logoAlt}" />
+                  </div>
+                  <span class="client-type">${item.industry || 'New client'}</span>
+                  <h2>${item.name || 'New company'}</h2>
+                  <p>${description}</p>
+                  ${websiteUrl
+                    ? `<a href="${websiteUrl}" target="_blank" rel="noreferrer">Visit website</a>`
+                    : '<span class="portfolio-link-placeholder">Website link coming soon</span>'}
+                </div>
+              </article>
+            `;
+          })
+          .join('');
+      };
+
+      const storedItems = window.localStorage ? JSON.parse(window.localStorage.getItem(storageKey) || 'null') : null;
+      const initialItems = Array.isArray(window.clientWorkItems) && window.clientWorkItems.length
+        ? window.clientWorkItems
+        : [];
+
+      window.clientWorkItems = Array.isArray(storedItems) && storedItems.length
+        ? storedItems
+        : initialItems;
+
+      if (!window.createClientWorkItem) {
+        window.createClientWorkItem = (overrides = {}) => ({
+          name: '',
+          industry: '',
+          description: '',
+          websiteUrl: '',
+          logo: '',
+          logoAlt: '',
+          heroImage: '',
+          ...overrides
+        });
+      }
+
+      renderPortfolioGrid();
+
+      if (clientWorkForm) {
+        clientWorkForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+
+          const formData = new FormData(clientWorkForm);
+          const newEntry = window.createClientWorkItem({
+            name: String(formData.get('name') || '').trim(),
+            industry: String(formData.get('industry') || '').trim(),
+            description: String(formData.get('description') || '').trim(),
+            websiteUrl: String(formData.get('websiteUrl') || '').trim(),
+            logo: String(formData.get('logo') || '').trim(),
+            logoAlt: String(formData.get('logoAlt') || '').trim(),
+            heroImage: String(formData.get('heroImage') || '').trim()
+          });
+
+          if (!newEntry.name) {
+            return;
+          }
+
+          window.clientWorkItems = [newEntry, ...window.clientWorkItems];
+          saveItems();
+          renderPortfolioGrid();
+          clientWorkForm.reset();
+        });
+      }
+
+      if (resetFormButton) {
+        resetFormButton.addEventListener('click', () => {
+          clientWorkForm.reset();
+        });
+      }
+    </script>
   </body>
 </html>

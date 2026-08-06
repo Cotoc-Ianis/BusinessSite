@@ -21,6 +21,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 88px;
   overflow-x: hidden;
   max-width: 100%;
 }
@@ -33,6 +34,7 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   max-width: 100%;
+  padding-top: 80px;
 }
 
 @keyframes fadeUp {
@@ -103,13 +105,31 @@ button {
 }
 
 .site-header {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 20;
+  width: 100%;
   background: rgba(16, 54, 47, 0.92);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   animation: fadeUp 0.6s ease both;
+  transform: translateY(0);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  opacity: 1;
+}
+
+.site-header.is-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.site-header.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .nav-wrap {
@@ -496,6 +516,13 @@ button {
   margin-bottom: 28px;
 }
 
+.section-intro {
+  max-width: 700px;
+  margin: 0 auto 24px;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
 .center {
   text-align: center;
 }
@@ -565,6 +592,10 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.full-template-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .packages-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
@@ -574,6 +605,8 @@ button {
   background: linear-gradient(180deg, #fcf9f4 0%, #f4ece2 100%);
   position: relative;
   overflow: hidden;
+  color: var(--text);
+  text-decoration: none;
 }
 
 .template-card::after {
@@ -588,8 +621,19 @@ button {
 
 .template-card.featured {
   border-color: rgba(36, 151, 168, 0.18);
-  background: linear-gradient(180deg, rgba(36, 151, 168, 0.08), rgba(255, 255, 255, 0.94));
+  background: linear-gradient(135deg, rgba(16, 44, 66, 0.95), rgba(32, 79, 73, 0.95));
   transform: translateY(-2px);
+  color: #fff;
+}
+
+.template-card.featured h3,
+.template-card.featured p,
+.template-card.featured .template-badge {
+  color: #fff;
+}
+
+.template-card.featured .template-badge {
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .package-card {
@@ -697,6 +741,23 @@ button {
   text-transform: uppercase;
 }
 
+.template-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+.template-demo-hero {
+  background: linear-gradient(135deg, rgba(16, 44, 66, 0.96), rgba(32, 79, 73, 0.95));
+  color: #fff;
+}
+
+.template-demo-hero h1,
+.template-demo-hero .section-tag,
+.template-demo-hero .lead {
+  color: #fff;
+}
+
 .testimonial-section {
   padding-top: 0;
 }
@@ -796,6 +857,75 @@ button {
   max-width: 760px;
 }
 
+.client-manager-section {
+  padding-top: 10px;
+}
+
+.client-manager-card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 12px 28px rgba(16, 44, 66, 0.06);
+  margin-bottom: 24px;
+}
+
+.client-manager-header h2 {
+  margin: 0 0 8px;
+  color: var(--navy);
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+
+.client-manager-header p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.client-work-form {
+  margin-top: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.form-grid input,
+.form-grid textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font: inherit;
+  background: #fff;
+  color: var(--text);
+}
+
+.form-grid textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
 .portfolio-section {
   padding-top: 10px;
 }
@@ -846,6 +976,21 @@ button {
   padding: 18px 18px 20px;
 }
 
+.client-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 54px;
+  margin-bottom: 12px;
+}
+
+.client-logo {
+  max-height: 42px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 20px rgba(16, 44, 66, 0.08));
+}
+
 .client-type {
   display: inline-block;
   color: var(--teal-deep);
@@ -878,6 +1023,13 @@ button {
 .portfolio-copy a::after {
   content: "→";
   margin-left: 8px;
+}
+
+.portfolio-link-placeholder {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  font-weight: 600;
 }
 
 @media (max-width: 920px) {
