@@ -1,0 +1,80 @@
+/* Shared admin panel styles — not served to public site visitors */
+
+body {
+  padding-top: 0;
+}
+
+/* Override the fixed/animated header for admin pages */
+.site-header {
+  position: static !important;
+  transform: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Keep the active nav item readable without a link */
+.main-nav .nav-current {
+  font-weight: 600;
+  color: var(--primary);
+  cursor: default;
+}
+
+.admin-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+.admin-back {
+  display: inline-block;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.875rem;
+  margin-bottom: 20px;
+}
+.admin-back:hover { color: var(--text); }
+
+.admin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px;
+  margin-bottom: 28px;
+}
+
+.admin-card h2 {
+  margin: 0 0 6px;
+  font-size: 1.1rem;
+}
+
+.admin-card .card-desc {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  margin-bottom: 24px;
+}
+
+.admin-card .card-desc code {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.82rem;
+  font-family: 'Courier New', monospace;
+}
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.save-status {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.save-status.ok  { color: #16a34a; }
+.save-status.err { color: #dc2626; }

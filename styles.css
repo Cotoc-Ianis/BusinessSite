@@ -1,3 +1,7 @@
+/* ═══════════════════════════════════════════════════════════
+   1. DESIGN TOKENS
+   Edit colours and shadows here to retheme the whole site.
+   ═══════════════════════════════════════════════════════════ */
 :root {
   --bg: #f3efe9;
   --bg-soft: #e9e1d8;
@@ -13,8 +17,16 @@
   --muted: #586d69;
   --border: #d8cfc2;
   --shadow: 0 18px 45px rgba(16, 44, 66, 0.14);
+
+  /* Semantic aliases — used by admin pages and components */
+  --primary:    #204f49;
+  --surface:    #f9f4ee;
+  --text-muted: #586d69;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   2. RESET & BASE STYLES
+   ═══════════════════════════════════════════════════════════ */
 * {
   box-sizing: border-box;
 }
@@ -37,6 +49,9 @@ body {
   padding-top: 80px;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   3. ANIMATIONS
+   ═══════════════════════════════════════════════════════════ */
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -95,6 +110,9 @@ button {
   font: inherit;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   4. LAYOUT UTILITIES
+   ═══════════════════════════════════════════════════════════ */
 .container {
   width: min(1240px, calc(100% - 28px));
   margin: 0 auto;
@@ -104,6 +122,9 @@ button {
   padding: 60px 0;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   5. NAVIGATION
+   ═══════════════════════════════════════════════════════════ */
 .site-header {
   position: fixed;
   top: 0;
@@ -220,6 +241,9 @@ button {
   border-radius: 10px;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   6. HERO SECTION
+   ═══════════════════════════════════════════════════════════ */
 .hero {
   padding: 44px 0 30px;
   animation: fadeUp 0.8s ease both;
@@ -227,7 +251,7 @@ button {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 24px;
 }
@@ -336,6 +360,7 @@ button {
   justify-content: center;
 }
 
+/* ── Hero Visual — Browser Mockup ───────────────────────── */
 .browser-window {
   width: min(100%, 560px);
   background: var(--card);
@@ -489,6 +514,9 @@ button {
   font-weight: 600;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   7. ABOUT SECTION
+   ═══════════════════════════════════════════════════════════ */
 .about-section {
   background: linear-gradient(180deg, rgba(36, 151, 168, 0.04), rgba(36, 151, 168, 0));
 }
@@ -527,6 +555,11 @@ button {
   text-align: center;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   8. CARDS & GRID COMPONENTS
+   Process steps, template cards, and package cards share
+   base styles here — overrides follow in sections 9 & 10.
+   ═══════════════════════════════════════════════════════════ */
 .process-grid,
 .template-grid,
 .packages-grid {
@@ -601,6 +634,9 @@ button {
   align-items: stretch;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   9. TEMPLATE CARDS
+   ═══════════════════════════════════════════════════════════ */
 .template-card {
   background: linear-gradient(180deg, #fcf9f4 0%, #f4ece2 100%);
   position: relative;
@@ -636,6 +672,9 @@ button {
   background: rgba(255, 255, 255, 0.16);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   10. PACKAGE CARDS
+   ═══════════════════════════════════════════════════════════ */
 .package-card {
   display: flex;
   flex-direction: column;
@@ -727,6 +766,10 @@ button {
   font-size: 1.3rem;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   11. TEMPLATE DEMO PAGES
+   Badges, hero, and embedded PDF viewer on template pages.
+   ═══════════════════════════════════════════════════════════ */
 .template-badge {
   display: inline-flex;
   align-items: center;
@@ -758,6 +801,36 @@ button {
   color: #fff;
 }
 
+.template-pdf-section {
+  padding: 0 0 72px;
+  background: var(--bg);
+}
+
+.pdf-iframe-wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: #f5f5f5;
+}
+
+.pdf-iframe-wrap iframe {
+  display: block;
+  width: 100%;
+  height: 820px;
+  border: none;
+}
+
+.pdf-fallback-msg {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   12. TESTIMONIAL
+   ═══════════════════════════════════════════════════════════ */
 .testimonial-section {
   padding-top: 0;
 }
@@ -796,6 +869,9 @@ button {
   font-weight: 600;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   13. FOOTER
+   ═══════════════════════════════════════════════════════════ */
 .site-footer {
   padding-top: 24px;
   padding-bottom: 18px;
@@ -849,6 +925,10 @@ button {
   font-size: 0.92rem;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   14. INTERIOR PAGES
+   Shared styles for contact, payment, customer-sites, etc.
+   ═══════════════════════════════════════════════════════════ */
 .page-hero {
   padding: 90px 0 50px;
 }
@@ -857,6 +937,7 @@ button {
   max-width: 760px;
 }
 
+/* ── Client Manager Form (legacy — kept for reference) ──── */
 .client-manager-section {
   padding-top: 10px;
 }
@@ -926,6 +1007,9 @@ button {
   margin-top: 16px;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   15. CLIENT PORTFOLIO
+   ═══════════════════════════════════════════════════════════ */
 .portfolio-section {
   padding-top: 10px;
 }
@@ -1032,6 +1116,11 @@ button {
   font-weight: 600;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   16. RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤ 920px) ───────────────────────────────────── */
 @media (max-width: 920px) {
   .hero-grid,
   .split-layout {
@@ -1065,6 +1154,7 @@ button {
   }
 }
 
+/* ── Small Tablet / Large Mobile (≤ 640px) ─────────────── */
 @media (max-width: 640px) {
   .section {
     padding: 56px 0;
@@ -1147,6 +1237,7 @@ button {
   }
 }
 
+/* ── Wide Mobile (≤ 720px) — nav wraps ─────────────────── */
 @media (max-width: 720px) {
   .nav-wrap {
     flex-wrap: wrap;
@@ -1237,6 +1328,7 @@ button {
   }
 }
 
+/* ── Small Mobile (≤ 480px) ────────────────────────────── */
 @media (max-width: 480px) {
   .logo {
     font-size: 0.98rem;

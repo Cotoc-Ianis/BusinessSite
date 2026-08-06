@@ -120,7 +120,7 @@
           <a href="templates/index.html">Templates</a>
           <a href="customer-sites.html">Client work</a>
           <a href="payment.html?package=starter" class="active-page">Checkout</a>
-          <a href="index.html#contact">Contact</a>
+          <a href="#contact">Contact</a>
         </nav>
       </div>
     </header>
@@ -149,6 +149,38 @@
       </section>
     </main>
 
+    <footer class="site-footer" id="contact">
+      <div class="container footer-grid">
+        <div>
+          <a href="index.html" class="logo footer-logo">
+            <span class="logo-mark">W</span>
+            <span>WebForge</span>
+          </a>
+          <p>Custom websites designed to help businesses look sharper and grow faster.</p>
+        </div>
+        <div>
+          <h3>Contact</h3>
+          <ul class="contact-list">
+            <li><a href="mailto:hello@webforge.com">hello@webforge.com</a></li>
+            <li><a href="tel:+15551234567">+1 (555) 123-4567</a></li>
+            <li>125 Market Street, Suite 400</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Follow us</h3>
+          <ul class="social-list">
+            <li><a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a></li>
+            <li><a href="https://linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a></li>
+            <li><a href="https://x.com" target="_blank" rel="noreferrer">X / Twitter</a></li>
+            <li><a href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <p>© <span id="year"></span> WebForge Studio</p>
+      </div>
+    </footer>
+
     <script src="script.js"></script>
     <script>
       const packageData = {
@@ -163,6 +195,7 @@
 
       document.getElementById('package-name').textContent = item.name;
       document.getElementById('package-price').textContent = item.price;
+      document.querySelector('.pay-button').href = 'contact.html?package=' + selectedPackage;
     </script>
   </body>
 </html>

@@ -1,8 +1,10 @@
+/* ── 1. UTILITIES ──────────────────────────────────────── */
 const yearNode = document.getElementById('year');
 if (yearNode) {
   yearNode.textContent = new Date().getFullYear();
 }
 
+/* ── 2. MOBILE NAVIGATION TOGGLE ───────────────────────── */
 const navToggle = document.querySelector('.nav-toggle');
 const mainNav = document.querySelector('.main-nav');
 const siteHeader = document.querySelector('.site-header');
@@ -22,6 +24,7 @@ if (navToggle && mainNav) {
   });
 }
 
+/* ── 3. HEADER SCROLL BEHAVIOUR ────────────────────────── */
 if (siteHeader) {
   const showHeader = () => {
     siteHeader.classList.remove('is-hidden');
@@ -39,7 +42,7 @@ if (siteHeader) {
     clearTimeout(hideTimer);
     hideTimer = setTimeout(() => {
       hideHeader();
-    }, 220);
+    }, 1500);
   };
 
   showHeader();

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Client Work | Admin | WebForge Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="admin.css" />
+    <style>
+      .client-card {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        margin-bottom: 16px;
+        overflow: hidden;
+      }
+      .client-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .client-card-name { font-weight: 600; font-size: 0.9rem; }
+      .btn-remove {
+        padding: 5px 12px;
+        background: none;
+        border: 1px solid #fca5a5;
+        border-radius: 5px;
+        color: #b91c1c;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s;
+      }
+      .btn-remove:hover { background: #fef2f2; }
+      .client-card-fields {
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .field-row { display: flex; flex-direction: column; gap: 4px; }
+      .field-row.full { grid-column: 1 / -1; }
+      .field-row span {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+      }
+      .field-row input {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-family: inherit;
+        background: var(--bg);
+        color: var(--text);
+        transition: outline 0.1s;
+      }
+      .field-row input:focus {
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+        border-color: transparent;
+      }
+      .add-client-btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        background: none;
+        border: 2px dashed var(--border);
+        border-radius: 10px;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+        margin-bottom: 28px;
+        transition: border-color 0.15s, color 0.15s;
+      }
+      .add-client-btn:hover { border-color: var(--primary); color: var(--primary); }
+      @media (max-width: 560px) { .client-card-fields { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="../index.html" class="logo" aria-label="WebForge Studio home">
+          <span class="logo-mark">W</span>
+          <span>WebForge</span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="../index.html">Home</a>
+          <a href="../templates/index.html">Templates</a>
+          <a href="../customer-sites.html">Client work</a>
+          <a href="index.html">Admin</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="admin-wrap">
+        <a href="index.html" class="admin-back">&larr; Admin home</a>
+        <h1 style="margin-bottom: 28px;">Client Work</h1>
+
+        <div class="admin-card">
+          <h2>Portfolio Entries</h2>
+          <p class="card-desc">
+            Each entry appears as a card on the
+            <a href="../customer-sites.html">client work page</a>.
+            Edit any field directly, add new entries, or remove existing ones.
+            Click <strong>Save</strong> — a dialog opens; navigate to the
+            <code>data/</code> folder and save over <code>client-work-data.js</code>.
+          </p>
+
+          <div id="clients-container"></div>
+
+          <button class="add-client-btn" onclick="addClient()">+ Add Client</button>
+
+          <div class="action-bar">
+            <button class="btn btn-primary" onclick="saveFile()">Save client-work-data.js</button>
+            <button class="btn btn-secondary" onclick="copyToClipboard()">Copy to clipboard</button>
+            <span id="status" class="save-status"></span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="../data/client-work-data.js"></script>
+    <script>
+      var container = document.getElementById('clients-container');
+
+      (window.clientWorkItems || []).forEach(function (item) {
+        container.appendChild(makeCard(item));
+      });
+
+      function makeCard(item) {
+        item = item || {};
+
+        var card = document.createElement('div');
+        card.className = 'client-card';
+
+        // ── Header ──────────────────────────────────────────────────────────
+        var header = document.createElement('div');
+        header.className = 'client-card-header';
+
+        var nameDisplay = document.createElement('span');
+        nameDisplay.className = 'client-card-name';
+        nameDisplay.textContent = item.name || 'New Client';
+
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'btn-remove';
+        removeBtn.textContent = 'Remove';
+        removeBtn.onclick = function () { card.remove(); };
+
+        header.appendChild(nameDisplay);
+        header.appendChild(removeBtn);
+        card.appendChild(header);
+
+        // ── Fields ──────────────────────────────────────────────────────────
+        var fields = document.createElement('div');
+        fields.className = 'client-card-fields';
+
+        var FIELDS = [
+          { key: 'name',        label: 'Business Name',   full: false },
+          { key: 'industry',    label: 'Industry',        full: false },
+          { key: 'description', label: 'Description',     full: true  },
+          { key: 'websiteUrl',  label: 'Website URL',     full: true  },
+          { key: 'logo',        label: 'Logo URL',        full: true  },
+          { key: 'logoAlt',     label: 'Logo Alt Text',   full: false },
+          { key: 'heroImage',   label: 'Hero Image URL',  full: true  },
+        ];
+
+        FIELDS.forEach(function (f) {
+          var row = document.createElement('label');
+          row.className = 'field-row' + (f.full ? ' full' : '');
+
+          var lbl = document.createElement('span');
+          lbl.textContent = f.label;
+
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.dataset.field = f.key;
+          inp.value = item[f.key] || '';
+
+          if (f.key === 'name') {
+            inp.oninput = function () {
+              nameDisplay.textContent = this.value.trim() || 'New Client';
+            };
+          }
+
+          row.appendChild(lbl);
+          row.appendChild(inp);
+          fields.appendChild(row);
+        });
+
+        card.appendChild(fields);
+        return card;
+      }
+
+      function addClient() {
+        var card = makeCard({});
+        container.appendChild(card);
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        card.querySelector('input').focus();
+      }
+
+      function gatherItems() {
+        return Array.from(container.querySelectorAll('.client-card')).map(function (card) {
+          var obj = {};
+          card.querySelectorAll('[data-field]').forEach(function (inp) {
+            obj[inp.dataset.field] = inp.value.trim();
+          });
+          return obj;
+        });
+      }
+
+      function buildJS() {
+        return (
+          '// Client portfolio data — manage via admin/clients.html\n' +
+          'window.clientWorkItems = ' +
+          JSON.stringify(gatherItems(), null, 2) +
+          ';\n'
+        );
+      }
+
+      async function saveFile() {
+        var st = document.getElementById('status');
+        if (!window.showSaveFilePicker) { copyToClipboard(); return; }
+        try {
+          var handle = await window.showSaveFilePicker({
+            suggestedName: 'client-work-data.js',
+            types: [{ description: 'JavaScript', accept: { 'text/javascript': ['.js'] } }],
+          });
+          var w = await handle.createWritable();
+          await w.write(buildJS());
+          await w.close();
+          st.textContent = 'Saved! Make sure the file is in the data/ folder.';
+          st.className = 'save-status ok';
+          setTimeout(function () { st.textContent = ''; }, 4000);
+        } catch (e) {
+          if (e.name !== 'AbortError') {
+            st.textContent = 'Save failed — use Copy to clipboard instead.';
+            st.className = 'save-status err';
+          }
+        }
+      }
+
+      function copyToClipboard() {
+        var st = document.getElementById('status');
+        navigator.clipboard.writeText(buildJS()).then(function () {
+          st.textContent = 'Copied! Paste into data/client-work-data.js and save.';
+          st.className = 'save-status ok';
+          setTimeout(function () { st.textContent = ''; }, 5000);
+        }).catch(function () {
+          st.textContent = 'Could not access clipboard — check browser permissions.';
+          st.className = 'save-status err';
+        });
+      }
+    </script>
+  </body>
+</html>
