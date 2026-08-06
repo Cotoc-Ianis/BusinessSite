@@ -12,43 +12,35 @@
     <style>
       .template-row {
         display: grid;
-        grid-template-columns: 160px 1fr auto;
-        gap: 10px;
+        grid-template-columns: 140px 1fr auto;
+        gap: 8px;
         align-items: center;
-        padding: 10px 0;
+        padding: 12px 0;
         border-bottom: 1px solid var(--border);
       }
       .template-row:last-child { border-bottom: none; }
       .template-row .row-label { font-weight: 600; font-size: 0.875rem; }
-      .template-row input[type="text"] {
-        width: 100%;
-        padding: 8px 12px;
-        border: 1px solid var(--border);
-        border-radius: 6px;
-        font-size: 0.85rem;
-        font-family: 'Courier New', monospace;
-        background: var(--bg);
-        color: var(--text);
-        box-sizing: border-box;
+      .template-row .row-status {
+        grid-column: 2 / -1;
+        font-size: 0.78rem;
+        color: var(--text-muted);
+        margin-top: -4px;
+        min-height: 1em;
       }
-      .template-row input[type="text"]:focus {
-        outline: 2px solid var(--primary);
-        outline-offset: 1px;
-        border-color: transparent;
-      }
+      .row-status.loaded { color: #2e7d52; font-weight: 600; }
       .browse-label {
         display: inline-block;
-        padding: 8px 14px;
-        background: var(--bg);
-        border: 1px solid var(--border);
+        padding: 8px 16px;
+        background: var(--primary);
+        color: #fff;
         border-radius: 6px;
         font-size: 0.82rem;
-        font-weight: 500;
+        font-weight: 600;
         cursor: pointer;
         white-space: nowrap;
-        transition: background 0.15s;
+        transition: opacity 0.15s;
       }
-      .browse-label:hover { background: var(--border); }
+      .browse-label:hover { opacity: 0.85; }
       @media (max-width: 580px) {
         .template-row { grid-template-columns: 1fr auto; }
         .template-row .row-label { grid-column: 1 / -1; font-size: 0.8rem; }
@@ -76,20 +68,25 @@
         <a href="index.html" class="admin-back">&larr; Admin home</a>
         <h1 style="margin-bottom: 28px;">Template PDFs</h1>
 
-        <div class="admin-card">
-          <h2>Assign PDF Previews</h2>
+        <div class="admin-card" id="connect-card">
+          <h2>One-time setup</h2>
           <p class="card-desc">
-            Paths are relative to the <code>templates/</code> folder.
-            Place PDF files inside <code>templates/pdfs/</code> and enter
-            the filename like <code>pdfs/restaurant-preview.pdf</code>.<br />
-            Use <strong>Browse</strong> to pick a file and auto-fill its name.
-            Click <strong>Save</strong> — a dialog opens; navigate to the
-            <code>data/</code> folder and save over <code>template-data.js</code>.
+            Grant access to your project folder once. After that, uploading a PDF saves automatically with no extra steps.
+          </p>
+          <div class="action-bar">
+            <button class="btn btn-primary" onclick="connectFolder()">Connect project folder</button>
+            <span id="connect-status" class="save-status"></span>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <h2>Template PDFs</h2>
+          <p class="card-desc">
+            Pick a PDF for any template. It saves to the site automatically.
           </p>
           <div id="template-rows"></div>
-          <div class="action-bar">
-            <button class="btn btn-primary" onclick="saveFile()">Save template-data.js</button>
-            <button class="btn btn-secondary" onclick="copyToClipboard()">Copy to clipboard</button>
+          <div class="action-bar" id="fallback-bar" style="display:none;">
+            <button class="btn btn-secondary" onclick="copyToClipboard()">Copy to clipboard (fallback)</button>
             <span id="status" class="save-status"></span>
           </div>
         </div>
@@ -110,11 +107,137 @@
         { id: 'ecommerce',        label: 'E-Commerce' },
       ];
 
-      var stored  = window.templateData || {};
-      var rowsEl  = document.getElementById('template-rows');
+      var stored    = window.templateData || {};
+      var pdfData   = {};        // newly read base64 data URLs
+      var dirHandle = null;      // FileSystemDirectoryHandle for the project root
+      var DB_NAME   = 'wf-admin', STORE = 'handles', KEY = 'projectDir';
+
+      // ── IndexedDB helpers ─────────────────────────────────────────────────
+
+      function openDB() {
+        return new Promise(function (resolve, reject) {
+          var req = indexedDB.open(DB_NAME, 1);
+          req.onupgradeneeded = function () { req.result.createObjectStore(STORE); };
+          req.onsuccess = function () { resolve(req.result); };
+          req.onerror   = function () { reject(req.error); };
+        });
+      }
+
+      async function loadStoredHandle() {
+        try {
+          var db   = await openDB();
+          var tx   = db.transaction(STORE, 'readonly');
+          var req  = tx.objectStore(STORE).get(KEY);
+          return await new Promise(function (res) { req.onsuccess = function () { res(req.result || null); }; req.onerror = function () { res(null); }; });
+        } catch (e) { return null; }
+      }
+
+      async function storeHandle(handle) {
+        try {
+          var db  = await openDB();
+          var tx  = db.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).put(handle, KEY);
+        } catch (e) { /* silent */ }
+      }
+
+      // ── Folder connection ─────────────────────────────────────────────────
+
+      async function connectFolder() {
+        if (!window.showDirectoryPicker) {
+          document.getElementById('connect-status').textContent = 'Browser not supported — use the clipboard fallback below.';
+          document.getElementById('connect-status').className = 'save-status err';
+          document.getElementById('fallback-bar').style.display = '';
+          return;
+        }
+        try {
+          var handle = await window.showDirectoryPicker({ mode: 'readwrite' });
+          await storeHandle(handle);
+          dirHandle = handle;
+          markConnected();
+        } catch (e) {
+          if (e.name !== 'AbortError') {
+            document.getElementById('connect-status').textContent = 'Could not connect: ' + e.message;
+            document.getElementById('connect-status').className = 'save-status err';
+          }
+        }
+      }
+
+      function markConnected() {
+        var card   = document.getElementById('connect-card');
+        var cs     = document.getElementById('connect-status');
+        cs.textContent = '✓ Connected — PDFs will save automatically.';
+        cs.className   = 'save-status ok';
+        card.querySelector('button').textContent = 'Reconnect folder';
+      }
+
+      // ── Auto-save ─────────────────────────────────────────────────────────
+
+      async function autoSave(triggeredById) {
+        var st = document.getElementById('status');
+        // ensure read/write permission is still granted
+        try {
+          var perm = await dirHandle.requestPermission({ mode: 'readwrite' });
+          if (perm !== 'granted') throw new Error('Permission denied');
+        } catch (e) {
+          // fall back to clipboard
+          document.getElementById('fallback-bar').style.display = '';
+          copyToClipboard();
+          return;
+        }
+
+        try {
+          // navigate to data/ subfolder
+          var dataDir  = await dirHandle.getDirectoryHandle('data', { create: false });
+          var fileHand = await dataDir.getFileHandle('template-data.js', { create: true });
+          var writable = await fileHand.createWritable();
+          await writable.write(buildJS());
+          await writable.close();
+
+          var s = document.getElementById('status-' + triggeredById);
+          s.textContent = '✓ Saved — reload the template page to see it.';
+          s.className   = 'row-status loaded';
+        } catch (e) {
+          document.getElementById('fallback-bar').style.display = '';
+          st.textContent = 'Auto-save failed: ' + e.message + ' — use Copy to clipboard.';
+          st.className   = 'save-status err';
+        }
+      }
+
+      // ── Build output JS ───────────────────────────────────────────────────
+
+      function buildJS() {
+        var lines = TEMPLATES.map(function (t) {
+          var val = pdfData[t.id] || (stored[t.id] && stored[t.id].pdfPath) || '';
+          var pad = ' '.repeat(Math.max(1, 18 - t.id.length));
+          return "  '" + t.id + "'" + pad + ": { label: '" + t.label + "', pdfPath: " + JSON.stringify(val) + " }";
+        });
+        return (
+          '// Template PDF data — managed via admin/templates.html\n' +
+          'window.templateData = {\n' +
+          lines.join(',\n') + ',\n' +
+          '};\n'
+        );
+      }
+
+      function copyToClipboard() {
+        var st = document.getElementById('status');
+        navigator.clipboard.writeText(buildJS()).then(function () {
+          st.textContent = 'Copied! Open data/template-data.js in VS Code, press Ctrl+A, then paste.';
+          st.className = 'save-status ok';
+          setTimeout(function () { st.textContent = ''; }, 7000);
+        }).catch(function () {
+          st.textContent = 'Clipboard blocked — check browser permissions.';
+          st.className = 'save-status err';
+        });
+      }
+
+      // ── Build rows ────────────────────────────────────────────────────────
+
+      var rowsEl = document.getElementById('template-rows');
 
       TEMPLATES.forEach(function (t) {
-        var current = (stored[t.id] && stored[t.id].pdfPath) || '';
+        var existing   = (stored[t.id] && stored[t.id].pdfPath) || '';
+        var hasExisting = existing.length > 0;
 
         var row = document.createElement('div');
         row.className = 'template-row';
@@ -123,80 +246,70 @@
         lbl.className = 'row-label';
         lbl.textContent = t.label;
 
-        var inp = document.createElement('input');
-        inp.type = 'text';
-        inp.id   = 'pdf-' + t.id;
-        inp.value = current;
-        inp.placeholder = 'pdfs/' + t.id + '-preview.pdf';
-
         var browseLabel = document.createElement('label');
         browseLabel.className = 'browse-label';
-        browseLabel.textContent = 'Browse';
+        browseLabel.textContent = 'Choose PDF';
         var fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = '.pdf';
         fileInput.style.display = 'none';
+
+        var statusEl = document.createElement('span');
+        statusEl.className = 'row-status' + (hasExisting ? ' loaded' : '');
+        statusEl.id = 'status-' + t.id;
+        statusEl.textContent = hasExisting ? '✓ PDF loaded' : 'No PDF yet';
+
         fileInput.onchange = (function (id) {
           return function () {
-            if (this.files[0]) document.getElementById('pdf-' + id).value = 'pdfs/' + this.files[0].name;
+            var file = this.files[0];
+            if (!file) return;
+            var s = document.getElementById('status-' + id);
+            s.className = 'row-status';
+            s.textContent = 'Reading…';
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              pdfData[id] = e.target.result;
+              if (dirHandle) {
+                s.textContent = 'Saving…';
+                autoSave(id);
+              } else {
+                s.className = 'row-status loaded';
+                s.textContent = '✓ ' + file.name + ' ready — connect folder to auto-save, or use clipboard.';
+                document.getElementById('fallback-bar').style.display = '';
+              }
+            };
+            reader.onerror = function () {
+              s.textContent = 'Error reading file — try again';
+            };
+            reader.readAsDataURL(file);
           };
         })(t.id);
-        browseLabel.appendChild(fileInput);
 
+        browseLabel.appendChild(fileInput);
         row.appendChild(lbl);
-        row.appendChild(inp);
         row.appendChild(browseLabel);
+        row.appendChild(statusEl);
         rowsEl.appendChild(row);
       });
 
-      function buildJS() {
-        var lines = TEMPLATES.map(function (t) {
-          var val = document.getElementById('pdf-' + t.id).value.trim();
-          var pad = ' '.repeat(Math.max(1, 18 - t.id.length));
-          return "  '" + t.id + "'" + pad + ": { label: '" + t.label + "', pdfPath: '" + val + "' }";
-        });
-        return (
-          '// Template PDF preview paths — relative to the templates/ folder\n' +
-          '// Place PDF files in templates/pdfs/ and manage via admin/templates.html\n' +
-          'window.templateData = {\n' +
-          lines.join(',\n') + ',\n' +
-          '};\n'
-        );
-      }
+      // ── On load: restore stored handle ───────────────────────────────────
 
-      async function saveFile() {
-        var st = document.getElementById('status');
-        if (!window.showSaveFilePicker) { copyToClipboard(); return; }
+      (async function () {
+        var h = await loadStoredHandle();
+        if (!h) return;
         try {
-          var handle = await window.showSaveFilePicker({
-            suggestedName: 'template-data.js',
-            types: [{ description: 'JavaScript', accept: { 'text/javascript': ['.js'] } }],
-          });
-          var w = await handle.createWritable();
-          await w.write(buildJS());
-          await w.close();
-          st.textContent = 'Saved! Make sure the file is in the data/ folder.';
-          st.className = 'save-status ok';
-          setTimeout(function () { st.textContent = ''; }, 4000);
-        } catch (e) {
-          if (e.name !== 'AbortError') {
-            st.textContent = 'Save failed — use Copy to clipboard instead.';
-            st.className = 'save-status err';
+          // silently re-request permission (may succeed without a dialog if still granted)
+          var perm = await h.queryPermission({ mode: 'readwrite' });
+          if (perm === 'granted') { dirHandle = h; markConnected(); }
+          else {
+            // needs a user gesture — show a "Re-grant" prompt instead
+            var cs = document.getElementById('connect-status');
+            cs.textContent = 'Click "Reconnect folder" to restore auto-save.';
+            cs.className = 'save-status';
+            document.getElementById('connect-card').querySelector('button').textContent = 'Reconnect folder';
           }
-        }
-      }
-
-      function copyToClipboard() {
-        var st = document.getElementById('status');
-        navigator.clipboard.writeText(buildJS()).then(function () {
-          st.textContent = 'Copied! Paste into data/template-data.js and save the file.';
-          st.className = 'save-status ok';
-          setTimeout(function () { st.textContent = ''; }, 5000);
-        }).catch(function () {
-          st.textContent = 'Could not access clipboard — check browser permissions.';
-          st.className = 'save-status err';
-        });
-      }
+        } catch (e) { /* stale handle — ignore */ }
+      })();
     </script>
   </body>
 </html>
