@@ -254,10 +254,12 @@ button {
   color: rgba(255, 255, 255, 0.78);
   font-weight: 500;
   letter-spacing: 0.01em;
+  font-size: 1.02rem;
 }
 
 .main-nav a {
   position: relative;
+  padding: 6px 2px;
   transition: color 0.2s ease;
 }
 
@@ -309,7 +311,7 @@ button {
    6. HERO SECTION
    ═══════════════════════════════════════════════════════════ */
 .hero {
-  padding: 44px 0 30px;
+  padding: 56px 0 36px;
   animation: fadeUp 0.8s ease both;
 }
 
@@ -318,6 +320,74 @@ button {
   grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 24px;
+}
+
+.hero-grid--no-visual {
+  grid-template-columns: 1fr;
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.hero-grid--no-visual .hero-copy {
+  text-align: center;
+  display: grid;
+  justify-items: center;
+}
+
+.hero-grid--no-visual .eyebrow {
+  margin-bottom: 16px;
+}
+
+.hero-grid--no-visual h1 {
+  max-width: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 1100px) {
+  .hero-grid--no-visual h1 {
+    white-space: nowrap;
+    font-size: clamp(2rem, 3.15vw, 3.45rem);
+  }
+}
+
+.hero-grid--no-visual .lead {
+  margin: 0 auto;
+  max-width: 72ch;
+}
+
+.hero-grid--no-visual .hero-actions,
+.hero-grid--no-visual .hero-metrics {
+  justify-content: center;
+}
+
+.hero-grid--no-visual .hero-actions {
+  margin-top: 24px;
+  gap: 12px;
+}
+
+.hero-grid--no-visual .hero-actions .btn {
+  min-width: 198px;
+}
+
+.hero-grid--no-visual .hero-metrics li {
+  align-items: center;
+  text-align: center;
+}
+
+.hero-grid--no-visual .hero-metrics {
+  margin-top: 30px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(14, 95, 79, 0.16);
+  gap: 12px;
+}
+
+.hero-grid--no-visual .hero-metrics li {
+  min-width: 186px;
+  background: rgba(255, 248, 241, 0.72);
+  border: 1px solid rgba(14, 95, 79, 0.16);
+  border-radius: 12px;
+  padding: 14px 16px;
 }
 
 .eyebrow,
@@ -335,8 +405,8 @@ button {
 .split-layout h2,
 .section-heading h2 {
   font-family: var(--font-display);
-  font-size: clamp(2.4rem, 5vw, 4rem);
-  line-height: 1.02;
+  font-size: clamp(2.2rem, 4.8vw, 3.8rem);
+  line-height: 1.06;
   letter-spacing: -0.03em;
   margin: 0 0 16px;
   color: var(--navy);
@@ -346,15 +416,16 @@ button {
   margin: 0;
   max-width: 700px;
   color: var(--muted);
-  font-size: 1.05rem;
+  font-size: clamp(1rem, 1.8vw, 1.12rem);
+  line-height: 1.75;
   animation: fadeUp 0.9s ease 0.1s both;
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 12px;
+  margin-top: 22px;
   animation: fadeUp 1s ease 0.2s both;
 }
 
@@ -362,10 +433,11 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 18px;
+  min-height: 54px;
+  padding: 0 24px;
   border-radius: 10px;
   font-weight: 700;
+  font-size: 1rem;
   border: 1px solid transparent;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   clip-path: polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%);
@@ -410,14 +482,14 @@ button {
 }
 
 .hero-metrics strong {
-  font-size: 1.5rem;
+  font-size: 1.72rem;
   color: var(--navy);
   letter-spacing: -0.05em;
 }
 
 .hero-metrics span {
   color: var(--muted);
-  font-size: 0.92rem;
+  font-size: 0.97rem;
 }
 
 .hero-visual {
@@ -584,6 +656,8 @@ button {
    ═══════════════════════════════════════════════════════════ */
 .about-section {
   background: linear-gradient(180deg, rgba(215, 143, 103, 0.06), rgba(215, 143, 103, 0));
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 
 .split-layout {
@@ -591,6 +665,11 @@ button {
   grid-template-columns: 1fr 1fr;
   gap: 32px;
   align-items: center;
+}
+
+.about-section .split-layout {
+  align-items: start;
+  gap: 24px;
 }
 
 .split-layout h2,
@@ -603,6 +682,33 @@ button {
   margin: 0;
   color: var(--muted);
   font-size: 1.08rem;
+}
+
+.about-copy {
+  display: grid;
+  gap: 10px;
+}
+
+.about-impact {
+  display: grid;
+  gap: 6px;
+  max-width: 720px;
+}
+
+.about-impact-item {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.93rem;
+  line-height: 1.5;
+}
+
+.about-impact-keyword {
+  display: inline;
+  margin-right: 6px;
+  color: var(--teal-deep);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
 }
 
 .section-heading {
@@ -643,7 +749,7 @@ button {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 18px 16px;
+  padding: 22px 20px;
   box-shadow: 0 8px 20px rgba(13, 52, 44, 0.05);
   clip-path: polygon(0 0, 100% 0, 100% 92%, 96% 100%, 0 100%);
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -675,7 +781,7 @@ button {
 .template-card h3,
 .package-card h3 {
   margin: 0 0 12px;
-  font-size: 1.4rem;
+  font-size: 1.52rem;
   color: var(--navy);
 }
 
@@ -747,7 +853,7 @@ button {
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   cursor: pointer;
   position: relative;
-  min-height: 344px;
+  min-height: 370px;
   padding-top: 36px;
   clip-path: polygon(0 0, 100% 0, 100% 95%, 94% 100%, 0 100%);
 }
@@ -760,7 +866,7 @@ button {
   background: linear-gradient(135deg, var(--gold), #e6a37d);
   color: #fff8f1;
   border-radius: 999px;
-  padding: 7px 12px;
+  padding: 8px 14px;
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -800,7 +906,7 @@ button {
 }
 
 .package-card h3 {
-  font-size: 2.1rem;
+  font-size: 2.28rem;
   letter-spacing: -0.05em;
   margin: 0;
 }
@@ -814,13 +920,13 @@ button {
   margin: 0 0 16px;
   padding: 0;
   display: grid;
-  gap: 8px;
+  gap: 10px;
   color: var(--navy);
 }
 
 .package-card li {
   position: relative;
-  padding-left: 18px;
+  padding-left: 20px;
 }
 
 .package-card li::before {
@@ -1335,6 +1441,29 @@ button {
 
   .lead {
     font-size: 1rem;
+  }
+
+  .about-section {
+    padding-top: 42px;
+    padding-bottom: 42px;
+  }
+
+  .about-section .split-layout {
+    gap: 16px;
+  }
+
+  .about-impact {
+    gap: 5px;
+  }
+
+  .about-impact-item {
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .about-impact-keyword {
+    margin-right: 4px;
+    font-size: 0.68rem;
   }
 
   .hero-copy h1,
